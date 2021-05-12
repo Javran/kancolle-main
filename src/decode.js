@@ -6,8 +6,8 @@ let i = 0
 const decoderFunction = process.argv[2]
 
 writeFileSync(
-  'dist/main.js',
-  readFileSync('dist/main.js')
+  'dist/main.stage1.js',
+  readFileSync('dist/main.raw.js')
     .toString()
     .replace(new RegExp(`${decoderFunction}\\('(.+?)'\\)`, 'g'), x => `'${eval(x)}'`.replace(/\n/g, '\\n'))
     .replace(/(\S)\['([_a-zA-Z][_a-zA-Z0-9]*?)'\]/g, '$1.$2')

@@ -21,7 +21,7 @@ outputFileSync('dist/createjs.js', createjsPatched)
   const mainSource = (await get(kcsMainUrl)).data
   const [mainDecoder, mainFormatted] = beautify(mainSource, { indent_size: 2 }).split('\n! function')
   outputFileSync('dist/decode.js', `${mainDecoder}\n${decoderSource}`)
-  outputFileSync('dist/main.js', `! function${mainFormatted}`)
+  outputFileSync('dist/main.raw.js', `! function${mainFormatted}`)
 
   const decoderFunction = readFileSync('dist/decode.js')
     .toString()
@@ -29,14 +29,14 @@ outputFileSync('dist/createjs.js', createjsPatched)
 
   console.log(spawnSync('node', ['dist/decode.js', decoderFunction]).stdout.toString())
 
-  const mainDecoded = readFileSync('dist/main.js').toString()
+  const mainDecoded = readFileSync('dist/main.stage1.js').toString()
   const mainPatched = mainDecoded
     .replace(/Object\.defineProperty\((\S+?), '__esModule'/g, "defineModule($1); Object.defineProperty($1, '__esModule'")
     .replace(/module\.exports = (\S+?)\(\)/, 'module.exports = registerModules($1())')
 
   const build = `${patchSource.replace('scriptVesion', scriptVesion)}\n${mainPatched}`
   outputFileSync(
-    'dist/main.js',
+    'dist/main.stage2.js',
     build.replace(/\\u([\d\w]{4})/gi, (_, e) => String.fromCharCode(parseInt(e, 16))),
   )
   /*
