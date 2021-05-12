@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.14.1",
+    "@babel/traverse": "^7.14.0",
     "axios": "^0.19.2",
     "canvas": "^2.6.1",
     "createjs": "^1.0.1",

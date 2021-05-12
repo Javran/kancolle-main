@@ -4,6 +4,7 @@ const { get } = require('axios')
 const { readFileSync, outputFileSync } = require('fs-extra')
 const beautify = require('js-beautify').js
 const babelParser = require('@babel/parser')
+const traverse = require('@babel/traverse').default
 
 const kcsConstUrl = 'https://kcwiki.github.io/cache/gadget_html5/js/kcs_const.js'
 const kcsMainUrl = 'http://203.104.209.71/kcs2/js/main.js'
@@ -35,11 +36,13 @@ const fetchNew = false
   }
 
   const mainDecoded = readFileSync('dist/main.stage1.js').toString()
-  console.log(babelParser.parse(mainDecoded))
-
-  /*
-  const main = require('../dist/main')
-  const api = inspect(main.modules, { maxArrayLength: 10000, depth: 10 }).replace(/\n\s*?START_TIME:\s*?\d+?,\n/g, '\n')
-  outputFileSync('dist/api', api)
-  */
+  // const mainAst = babelParser.parse(mainDecoded)
+  const mainAst = babelParser.parse("o['a']['BBB']")
+  const lim = 19
+  let count = 0
+  traverse(mainAst, {
+    MemberExpression: function(path) {
+      console.log(path.node)
+    },
+  })
 })()
