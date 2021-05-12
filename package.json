@@ -19,11 +19,12 @@
   "scripts": {
     "format": "prettier --loglevel warn --write 'src/*.{js,json,md,ts,yaml,yml}'",
     "lint": "eslint --fix src",
-    "build": "rimraf dist && node src/build.js",
+    "build": "node src/build.js",
     "test": "yarn format && yarn lint && yarn build && tape src/test.js",
     "up": "yarn upgrade --latest"
   },
   "dependencies": {
+    "@babel/parser": "^7.14.1",
     "axios": "^0.19.2",
     "canvas": "^2.6.1",
     "createjs": "^1.0.1",
