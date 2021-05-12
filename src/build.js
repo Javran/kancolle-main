@@ -5,6 +5,8 @@ const { readFileSync, outputFileSync } = require('fs-extra')
 const beautify = require('js-beautify').js
 const babelParser = require('@babel/parser')
 const traverse = require('@babel/traverse').default
+const generate = require('@babel/generator').default
+const types = require('@babel/types')
 
 const kcsConstUrl = 'https://kcwiki.github.io/cache/gadget_html5/js/kcs_const.js'
 const kcsMainUrl = 'http://203.104.209.71/kcs2/js/main.js'
@@ -37,12 +39,19 @@ const fetchNew = false
 
   const mainDecoded = readFileSync('dist/main.stage1.js').toString()
   // const mainAst = babelParser.parse(mainDecoded)
-  const mainAst = babelParser.parse("o['a']['BBB']")
-  const lim = 19
-  let count = 0
+  const src = "o['a']['BBB']['CcCc']['DDDDeeDD']"
+  console.log('before:', src)
+  const mainAst = babelParser.parse(src)
+  // const mainAst = babelParser.parse("o.a.b")
+  // console.log(mainAst.program.body)
   traverse(mainAst, {
     MemberExpression: function(path) {
-      console.log(path.node)
+      if (path.node.computed && path.node.property.type === 'StringLiteral') {
+        // TODO: check string literal is legit to transform.
+        path.replaceWith(types.memberExpression(path.node.object, types.identifier(path.node.property.value), false))
+      }
     },
   })
+
+  console.log('after:', generate(mainAst).code)
 })()
