@@ -38,20 +38,17 @@ const fetchNew = false
   }
 
   const mainDecoded = readFileSync('dist/main.stage1.js').toString()
-  // const mainAst = babelParser.parse(mainDecoded)
-  const src = "o['a']['BBB']['CcCc']['DDDDeeDD']"
-  console.log('before:', src)
-  const mainAst = babelParser.parse(src)
-  // const mainAst = babelParser.parse("o.a.b")
+  const mainAst = babelParser.parse(mainDecoded)
+  const re = /^[_a-zA-Z][_a-zA-Z0-9]*$/
   // console.log(mainAst.program.body)
   traverse(mainAst, {
     MemberExpression: function(path) {
       if (path.node.computed && path.node.property.type === 'StringLiteral') {
-        // TODO: check string literal is legit to transform.
-        path.replaceWith(types.memberExpression(path.node.object, types.identifier(path.node.property.value), false))
+        if (re.test(path.node.property.value)) {
+          path.replaceWith(types.memberExpression(path.node.object, types.identifier(path.node.property.value), false))
+        }
       }
     },
   })
-
-  console.log('after:', generate(mainAst).code)
+  outputFileSync('dist/main.babelout.js', generate(mainAst).code)
 })()
